@@ -8,7 +8,7 @@ net.createServer( (socket) => {
     let socketname = socket.remoteAddress + ":" + socket.remotePort
     console.log(`New connection ${socketname}`)
 
-    Packet.Send("SendGreetings", socket)
+    //Packet.Send("SendGreetings", socket);
 
     socket.on('data', (data: Buffer) => new PacketHandler(socket, data))
 
@@ -29,7 +29,7 @@ net.createServer( (socket) => {
 })
 .listen({
   host: 'localhost',
-  port: 23000,
+  port: 28000,
   exclusive: true
 });
 console.log("Running")

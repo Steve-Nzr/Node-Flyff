@@ -15,39 +15,14 @@ const Assoc: IPacketHandle = {
     "Outgoing": [
         {
             "Protocol": 0x00,
-            "File": "SendGreetings",
-            "Func": null
-        },
-        {
-            "Protocol": 0xFE,
-            "File": "SendError",
-            "Func": null
-        },
-        {
-            "Protocol": 0xFD,
-            "File": "SendServerList",
+            "File": "SendPong",
             "Func": null
         }
     ],
     "Incoming": [
         {
-            "Protocol": 0xFC,
-            "File": "OnLoginRequest",
-            "Func": null
-        },
-        {
-            "Protocol": 0x16,
-            "File": "OnReloginRequest",
-            "Func": null
-        },
-        {
             "Protocol": 0x14,
             "File": "OnPing",
-            "Func": null
-        },
-        {
-            "Protocol": 0xFF,
-            "File": "OnEnd",
             "Func": null
         }
     ]

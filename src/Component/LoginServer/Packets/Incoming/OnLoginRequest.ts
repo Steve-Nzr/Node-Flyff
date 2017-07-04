@@ -1,4 +1,5 @@
 import {List} from '../List'
+import * as Packet from '../PacketMaker'
 import * as aesjs from 'aes-js'
 
 const key       = toBytes("dldhsvmflvm", 16)
@@ -21,9 +22,9 @@ function decryptPassword(pass) {
 }
 
 module.exports = (socket, PacketReader) => {
-    console.log((PacketReader.packet as Buffer).byteLength)
-    console.log(PacketReader.readString())
-    console.log(PacketReader.readString())
+    console.log("connect")
+    let version = PacketReader.readString()
+    let account = PacketReader.readString()
     let password = decryptPassword(PacketReader.readBytes(16*42));
-    console.log(password)
+    Packet.Send("SendServerList", socket, {account: account})
 }

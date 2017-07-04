@@ -6,14 +6,14 @@ let PacketReader = class PacketManager {
     constructor(public packet: Buffer) {
     }
 
-    protected readByte(offset: number = this.offset): number {
+    public readByte(offset: number = this.offset): number {
         let result = this.packet.readUInt8(offset)
         if (offset === this.offset)
             this.offset += 1;
         return result;
     }
 
-    protected readBytes(count: number = 0, offset: number = this.offset): number[] {
+    public readBytes(count: number = 0, offset: number = this.offset): number[] {
         if (count <= 0)
             return null;
         let result: number[] = [];
@@ -26,21 +26,21 @@ let PacketReader = class PacketManager {
         return result;
     }
 
-    protected readInt16(offset: number = this.offset): number {
+    public readInt16(offset: number = this.offset): number {
         let result = this.packet.readUInt16LE(offset)
         if (offset === this.offset)
             this.offset += 2;
         return result;
     }
 
-    protected readInt32(offset: number = this.offset): number {
+    public readInt32(offset: number = this.offset): number {
         let result = this.packet.readUInt32LE(offset)
         if (offset === this.offset)
             this.offset += 4;
         return result;
     }
 
-    protected readString(offset: number = this.offset): string {
+    public readString(offset: number = this.offset): string {
         let length = this.readInt32(offset)
         offset += 4
         let result = ""
@@ -53,20 +53,26 @@ let PacketReader = class PacketManager {
 let PacketWriter = class PacketConstructor {
     protected buf: any[] = [];
 
-    constructor(protected readonly protocol: number) {
+    constructor(public readonly protocol: number) {
     }
 
     protected Serialize() {
-        this.writeHeader();
-        this.writeInt32(0);
+        this.writeHeader()
+        this.writeInt32(0)
+        this.writeInt32(this.protocol)
+        this.writeInt32(0)
     }
 
     protected finish() {
         let len = this.buf.length - 5;
-        this.buf.splice(1, 0, (len & 0xff000000) >> 24)
-        this.buf.splice(1, 0, (len & 0x00ff0000) >> 16)
-        this.buf.splice(1, 0, (len & 0x0000ff00) >> 8)
-        this.buf.splice(1, 0, len & 0x000000ff)
+        if (len <= 5)
+            return;
+        console.log(this.getPacket())
+        this.buf[1] = len & 0x000000ff
+        this.buf[2] = (len & 0x0000ff00) >> 8
+        this.buf[3] = (len & 0x00ff0000) >> 16
+        this.buf[4] = (len & 0xff000000) >> 24
+        console.log(this.getPacket())
     }
 
     public getPacket() {
@@ -75,25 +81,26 @@ let PacketWriter = class PacketConstructor {
 
     protected writeHeader = () => this.writeByte(PACKET_HEADER);
 
-    protected writeByte(b: number) {
+    public writeByte(b: number) {
         this.buf.push(b & 0xff)
     }
 
-    protected writeInt16(n: number) {
+    public writeInt16(n: number) {
         this.buf.push(n & 0x00ff)
         this.buf.push((n & 0xff00) >> 8)
     }
 
-    protected writeInt32(n: number) {
+    public writeInt32(n: number) {
         this.buf.push(n & 0x000000ff)
         this.buf.push((n & 0x0000ff00) >> 8)
         this.buf.push((n & 0x00ff0000) >> 16)
         this.buf.push((n & 0xff000000) >> 24)
     }
 
-    protected writeString(s: string) {
+    public writeString(s: string) {
+        this.writeInt32(s.length)
         for (let c of s)
-            this.writeByte(c as any)
+            this.writeByte(c.charCodeAt(0) as any)
     }
 }
 

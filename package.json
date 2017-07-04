@@ -2,7 +2,9 @@
   "name": "",
   "version": "",
   "scripts": {
-    "start": "tsc && node dist/Component/LoginServer/LoginServer.js"
+    "start": "tsc && start npm run login && start npm run cluster",
+    "login": "node dist/Component/LoginServer/LoginServer.js",
+    "cluster": "node dist/Component/ClusterServer/ClusterServer.js"
   },
   "dependencies": {
     "@types/node": "^7.0.31",
