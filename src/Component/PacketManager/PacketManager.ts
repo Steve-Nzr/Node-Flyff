@@ -3,13 +3,26 @@ const PACKET_HEADER = 0x5E
 let PacketReader = class PacketManager {
     private offset: number = 0
 
-    constructor(protected packet: Buffer) {
+    constructor(public packet: Buffer) {
     }
 
     protected readByte(offset: number = this.offset): number {
         let result = this.packet.readUInt8(offset)
         if (offset === this.offset)
             this.offset += 1;
+        return result;
+    }
+
+    protected readBytes(count: number = 0, offset: number = this.offset): number[] {
+        if (count <= 0)
+            return null;
+        let result: number[] = [];
+        for (let i = 0; i < count; ++i, offset += 1)
+        {
+            result.push(this.packet.readUInt8(offset))
+			if (offset + 1 === this.offset)
+				this.offset += 1;
+        }
         return result;
     }
 

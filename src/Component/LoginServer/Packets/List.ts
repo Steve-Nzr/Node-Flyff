@@ -65,15 +65,15 @@ function SetAssocFunc(type: string, file: string, func: Function) {
 
 namespace List {
     export let Init = () => {
-        fs.readdirSync('./Packets/Incoming/')
+        fs.readdirSync(__dirname + '/Incoming/')
             .forEach((file) => {
                 if (file.substr(0,2) === "On" && file.substr(file.length - 2, file.length) === "js")
-                    SetAssocFunc("Incoming", file, require('./Incoming/' + file))
+                    SetAssocFunc("Incoming", file, require(__dirname + '/Incoming/' + file))
             })
-        fs.readdirSync('./Packets/Outgoing/')
+        fs.readdirSync(__dirname + '/Outgoing/')
             .forEach((file) => {
                 if (file.substr(0,4) === "Send" && file.substr(file.length - 2, file.length) === "js")
-                    SetAssocFunc("Outgoing", file, require('./Outgoing/' + file))
+                    SetAssocFunc("Outgoing", file, require(__dirname + '/Outgoing/' + file))
             })
     }
 

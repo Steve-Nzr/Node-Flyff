@@ -2,9 +2,10 @@
   "name": "",
   "version": "",
   "scripts": {
-    "start": "tsc && node app.js"
+    "start": "tsc && node dist/Component/LoginServer/LoginServer.js"
   },
   "dependencies": {
-    "@types/node": "^7.0.31"
+    "@types/node": "^7.0.31",
+    "aes-js": "^3.1.0"
   }
 }
