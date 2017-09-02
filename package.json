@@ -1,13 +1,19 @@
 {
-  "name": "",
-  "version": "",
+  "name": "node-flyff",
+  "version": "0.0.1",
   "scripts": {
-    "start": "tsc && start npm run login && start npm run cluster",
+    "start": "tsc && npm-run-all --parallel login cluster",
     "login": "node dist/Component/LoginServer/LoginServer.js",
-    "cluster": "node dist/Component/ClusterServer/ClusterServer.js"
+    "cluster": "node dist/Component/ClusterServer/ClusterServer.js",
+    "test": "tslint -c tslint.json './src/**/*.ts*'"
   },
   "dependencies": {
     "@types/node": "^7.0.31",
-    "aes-js": "^3.1.0"
+    "aes-js": "^3.1.0",
+    "npm-run-all": "^4.1.1"
+  },
+  "devDependencies": {
+    "tslint": "^5.7.0",
+    "typescript": "^2.5.2"
   }
 }

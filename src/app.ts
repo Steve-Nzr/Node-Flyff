@@ -1,25 +1,28 @@
-import * as net from 'net'
-
+import * as net from "net"
 
 const PACKET_HEADER = 0x5E;
 
 enum E_LOGIN_COMMAND {
-	LCMD_GREETING                  = 0x00000000,
-	LCMD_ERROR                     = 0x000000fe,
-	LCMD_SERVER_LIST               = 0x000000fd
-};
+    LCMD_GREETING = 0x00000000,
+    LCMD_ERROR = 0x000000fe,
+    LCMD_SERVER_LIST = 0x000000fd,
+}
 
 enum E_LOGIN_RECV {
     RECV_LOGIN_REQUEST = 0xFC,
     RECV_RELOG_REQUEST = 0x16,
     RECV_PING = 0x14,
-    RECV_SOCK_FIN = 0xFF
+    RECV_SOCK_FIN = 0xFF,
 }
 
 abstract class PacketConstructor {
     protected buf: any[] = [];
 
-    constructor(protected readonly packet_id: number) {
+    constructor(protected readonly packetId: number) {
+    }
+
+    public getPacket() {
+        return Buffer.from(this.buf);
     }
 
     protected start() {
@@ -28,52 +31,49 @@ abstract class PacketConstructor {
     }
 
     protected finish() {
-        let len = this.buf.length - 5;
-        this.buf.splice(1, 0, (len & 0xff000000) >> 24)
-        this.buf.splice(1, 0, (len & 0x00ff0000) >> 16)
-        this.buf.splice(1, 0, (len & 0x0000ff00) >> 8)
-        this.buf.splice(1, 0, len & 0x000000ff)
-    }
-
-    public getPacket() {
-        return Buffer.from(this.buf);
+        const len = this.buf.length - 5;
+        this.buf.splice(1, 0, (len & 0xff000000) >> 24);
+        this.buf.splice(1, 0, (len & 0x00ff0000) >> 16);
+        this.buf.splice(1, 0, (len & 0x0000ff00) >> 8);
+        this.buf.splice(1, 0, len & 0x000000ff);
     }
 
     protected writeHeader = () => this.writeByte(PACKET_HEADER);
 
     protected writeByte(b: number) {
-        this.buf.push(b & 0xff)
+        this.buf.push(b & 0xff);
     }
 
     protected writeInt16(n: number) {
-        this.buf.push(n & 0x00ff)
-        this.buf.push((n & 0xff00) >> 8)
+        this.buf.push(n & 0x00ff);
+        this.buf.push((n & 0xff00) >> 8);
     }
 
     protected writeInt32(n: number) {
-        this.buf.push(n & 0x000000ff)
-        this.buf.push((n & 0x0000ff00) >> 8)
-        this.buf.push((n & 0x00ff0000) >> 16)
-        this.buf.push((n & 0xff000000) >> 24)
+        this.buf.push(n & 0x000000ff);
+        this.buf.push((n & 0x0000ff00) >> 8);
+        this.buf.push((n & 0x00ff0000) >> 16);
+        this.buf.push((n & 0xff000000) >> 24);
     }
 
     protected writeString(s: string) {
-        for (let c of s)
-            this.writeByte(c as any)
+        for (const c of s) {
+            this.writeByte(c as any);
+        }
     }
 }
 
 class PacketCreator extends PacketConstructor {
-    constructor(packet_id: number) {
-        super(packet_id);
+    constructor(packetId: number) {
+        super(packetId);
 
-        if (this.packet_id === E_LOGIN_COMMAND.LCMD_GREETING)
+        if (this.packetId === E_LOGIN_COMMAND.LCMD_GREETING)
             this.greet();
     }
 
     public greet() {
         this.start()
-        this.writeInt32(this.packet_id)
+        this.writeInt32(this.packetId)
         this.writeInt32(1)
         this.finish()
     }
@@ -135,22 +135,20 @@ class PacketReader {
     }
 }
 
-net.createServer( (socket) => {
-    let socketname = socket.remoteAddress + ":" + socket.remotePort
-    console.log(`New connection ${socketname}`)
+net.createServer(socket => {
+    const socketName = socket.remoteAddress + ":" + socket.remotePort;
+    console.info(`New connection ${socketName}`);
 
-    let packet = new PacketCreator(E_LOGIN_COMMAND.LCMD_GREETING);
-    let buf = packet.getPacket();
+    const packet = new PacketCreator(E_LOGIN_COMMAND.LCMD_GREETING);
 
-    socket.write(buf);
+    socket.write(packet.getPacket());
 
-    socket.on('data', (data: Buffer) => {
-        console.log("Received", data)
+    socket.on("data", (data: Buffer) => {
+        console.info("Received", data);
         new PacketReader(data);
     })
 
-    socket.on('error', (err) => {
-        console.log("Error", err)
+    socket.on("error", (err) => {
         if (!socket.destroyed)
             socket.destroy()
     })
@@ -161,12 +159,10 @@ net.createServer( (socket) => {
             socket.destroy()
     })
 })
-.on('error', (err) => {
-  throw err;
-})
 .listen({
   host: 'localhost',
   port: 23000,
   exclusive: true
 });
-console.log("Running")
+
+console.log("Running");
