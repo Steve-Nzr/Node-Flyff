@@ -2,7 +2,8 @@
   "name": "node-flyff",
   "version": "0.0.1",
   "scripts": {
-    "start": "tsc && npm-run-all --parallel login cluster",
+    "old": "tsc && npm-run-all --parallel login cluster",
+    "start": "tsc && node dist/LoginServer/LoginServer.js",
     "login": "node dist/Component/LoginServer/LoginServer.js",
     "cluster": "node dist/Component/ClusterServer/ClusterServer.js",
     "test": "tslint -c tslint.json './src/**/*.ts*'"

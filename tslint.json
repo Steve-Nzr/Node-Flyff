@@ -6,8 +6,27 @@
     "jsRules": {},
     "rules": {
         "no-bitwise": false,
-        "no-console": [true, "log"],
-        "arrow-parens": false
-    },
-    "rulesDirectory": []
+        "no-console": [
+            true,
+            "log"
+        ],
+        "arrow-parens": false,
+        "curly": [
+            true,
+            "as-needed"
+        ],
+        "ordered-imports": false,
+        "object-literal-key-quotes": [
+            "consistent"
+        ],
+        "one-line": [
+            false
+        ],
+        "interface-name": [
+            false
+        ],
+        "max-classes-per-file": [
+            1
+        ]
+    }
 }
