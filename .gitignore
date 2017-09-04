@@ -60,3 +60,5 @@ typings/
 # Others
 dist/
 package-lock.json
+
+\.vscode/
